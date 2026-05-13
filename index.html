@@ -163,6 +163,32 @@
           </a>
         </div>
       </section>
+
+      <section class="markets-section" aria-labelledby="marketsTitle">
+        <div class="section-heading market-heading">
+          <div>
+            <p class="eyebrow">Real Data</p>
+            <h2 id="marketsTitle">Prediction market live.</h2>
+          </div>
+          <button id="refreshMarkets" type="button">Refresh data</button>
+        </div>
+
+        <div class="market-meta">
+          <span id="predictionStatus">Mengambil data market...</span>
+          <span id="marketUpdated">Source: Polymarket Gamma API</span>
+        </div>
+
+        <div id="predictionList" class="prediction-grid" aria-live="polite">
+          <article class="prediction-card skeleton"></article>
+          <article class="prediction-card skeleton"></article>
+          <article class="prediction-card skeleton"></article>
+        </div>
+
+        <p class="market-note">
+          Data ini untuk informasi dan eksperimen UI. Harga market berubah real-time dan
+          bukan saran finansial.
+        </p>
+      </section>
     </main>
 
     <footer class="site-footer">

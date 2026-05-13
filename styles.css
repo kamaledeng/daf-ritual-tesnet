@@ -434,7 +434,8 @@ pre {
   white-space: pre-wrap;
 }
 
-.tools-section {
+.tools-section,
+.markets-section {
   padding: 52px 0 22px;
 }
 
@@ -522,6 +523,192 @@ pre {
 .tool-card span:last-child {
   color: var(--muted);
   line-height: 1.55;
+}
+
+.market-heading {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.market-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  border: 1px solid rgba(99, 210, 151, 0.14);
+  border-radius: 8px;
+  background: rgba(10, 16, 14, 0.52);
+  color: var(--muted);
+  margin-bottom: 16px;
+  padding: 12px 14px;
+}
+
+.prediction-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.prediction-card {
+  position: relative;
+  display: grid;
+  min-height: 250px;
+  gap: 14px;
+  border: 1px solid rgba(99, 210, 151, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(150deg, rgba(25, 27, 32, 0.96), rgba(9, 31, 20, 0.72)),
+    var(--panel);
+  overflow: hidden;
+  padding: 18px;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.prediction-card::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(99, 210, 151, 0.08), transparent);
+  content: "";
+  opacity: 0;
+  transform: translateX(-40%);
+  transition:
+    opacity 180ms ease,
+    transform 420ms ease;
+}
+
+.prediction-card:hover {
+  border-color: rgba(99, 210, 151, 0.6);
+  box-shadow: 0 20px 70px rgba(99, 210, 151, 0.12);
+  transform: translateY(-4px);
+}
+
+.prediction-card:hover::before {
+  opacity: 1;
+  transform: translateX(40%);
+}
+
+.prediction-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.market-category {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.market-category span:last-child {
+  color: rgba(244, 240, 232, 0.58);
+  text-align: right;
+}
+
+.prediction-card h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.probability-row {
+  display: grid;
+  gap: 8px;
+}
+
+.probability-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.probability-top strong {
+  color: var(--accent-2);
+  font-size: 2.35rem;
+  line-height: 1;
+}
+
+.probability-top span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.probability-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(244, 240, 232, 0.1);
+  overflow: hidden;
+}
+
+.probability-bar span {
+  display: block;
+  width: var(--probability);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 18px rgba(99, 210, 151, 0.28);
+}
+
+.market-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.market-stats div {
+  border: 1px solid rgba(244, 240, 232, 0.1);
+  border-radius: 6px;
+  background: rgba(12, 13, 16, 0.44);
+  padding: 10px;
+}
+
+.market-stats span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.market-stats strong {
+  display: block;
+  color: var(--text);
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.market-link {
+  color: var(--accent);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.market-link:hover {
+  color: var(--accent-2);
+}
+
+.market-note {
+  max-width: 780px;
+  color: rgba(244, 240, 232, 0.58);
+  line-height: 1.6;
+  margin: 16px 0 0;
+}
+
+.prediction-card.skeleton {
+  min-height: 220px;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent),
+    rgba(25, 27, 32, 0.86);
+  background-size: 180% 100%, auto;
+  animation: skeletonSweep 1.4s ease-in-out infinite;
 }
 
 .site-footer {
@@ -670,6 +857,16 @@ pre {
   }
 }
 
+@keyframes skeletonSweep {
+  from {
+    background-position: 180% 0, 0 0;
+  }
+
+  to {
+    background-position: -180% 0, 0 0;
+  }
+}
+
 @media (max-width: 820px) {
   .site-header {
     align-items: center;
@@ -708,7 +905,9 @@ pre {
   .hero,
   .panel,
   .workspace,
-  .tool-grid {
+  .tool-grid,
+  .prediction-grid,
+  .market-heading {
     grid-template-columns: 1fr;
   }
 

@@ -12,6 +12,9 @@ const state = {
   chainId: null
 };
 
+const POLYMARKET_MARKETS_URL =
+  "https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=6&order=volume24hr&ascending=false";
+
 const els = {
   menuToggle: document.querySelector("#menuToggle"),
   mainMenu: document.querySelector("#mainMenu"),
@@ -26,7 +29,11 @@ const els = {
   readResult: document.querySelector("#readResult"),
   requestId: document.querySelector("#requestId"),
   txLink: document.querySelector("#txLink"),
-  output: document.querySelector("#output")
+  output: document.querySelector("#output"),
+  refreshMarkets: document.querySelector("#refreshMarkets"),
+  predictionList: document.querySelector("#predictionList"),
+  predictionStatus: document.querySelector("#predictionStatus"),
+  marketUpdated: document.querySelector("#marketUpdated")
 };
 
 function setMenuOpen(isOpen) {
@@ -57,6 +64,189 @@ function setBusy(isBusy) {
   els.sendRequest.disabled = isBusy;
   els.readResult.disabled = isBusy;
   els.connectWallet.disabled = isBusy;
+}
+
+function parseArray(value) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  try {
+    return JSON.parse(value || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function formatPercent(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return "-";
+  }
+  return `${Math.round(numeric * 100)}%`;
+}
+
+function formatUsd(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return "-";
+  }
+
+  return new Intl.NumberFormat("en-US", {
+    currency: "USD",
+    maximumFractionDigits: 0,
+    notation: numeric >= 1000000 ? "compact" : "standard",
+    style: "currency"
+  }).format(numeric);
+}
+
+function formatDate(value) {
+  if (!value) {
+    return "-";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  }).format(date);
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "\"": "&quot;",
+      "'": "&#039;"
+    };
+    return entities[char];
+  });
+}
+
+function getYesOutcome(market) {
+  const outcomes = parseArray(market.outcomes);
+  const prices = parseArray(market.outcomePrices);
+  const yesIndex = outcomes.findIndex((outcome) => String(outcome).toLowerCase() === "yes");
+  const index = yesIndex >= 0 ? yesIndex : 0;
+
+  return {
+    label: outcomes[index] || "Outcome",
+    probability: Number(prices[index] || market.lastTradePrice || 0)
+  };
+}
+
+function marketUrl(market) {
+  if (market.slug) {
+    return `https://polymarket.com/market/${encodeURIComponent(market.slug)}`;
+  }
+  return "https://polymarket.com/markets";
+}
+
+function renderMarkets(markets) {
+  if (!els.predictionList) {
+    return;
+  }
+
+  if (!markets.length) {
+    els.predictionList.innerHTML = `
+      <article class="prediction-card">
+        <h3>Belum ada market aktif yang bisa ditampilkan.</h3>
+        <p class="market-note">Coba refresh lagi beberapa saat lagi.</p>
+      </article>
+    `;
+    return;
+  }
+
+  els.predictionList.innerHTML = markets
+    .map((market) => {
+      const yes = getYesOutcome(market);
+      const probability = Math.max(0, Math.min(1, yes.probability || 0));
+      const category = market.category || market.events?.[0]?.category || "Market";
+      const endDate = market.endDateIso || market.endDate;
+      const volume = market.volume24hr || market.volumeNum || market.volume;
+      const liquidity = market.liquidityNum || market.liquidity;
+
+      return `
+        <article class="prediction-card">
+          <div class="market-category">
+            <span>${escapeHtml(category)}</span>
+            <span>Ends ${formatDate(endDate)}</span>
+          </div>
+          <h3>${escapeHtml(market.question || "Prediction market")}</h3>
+          <div class="probability-row">
+            <div class="probability-top">
+              <strong>${formatPercent(probability)}</strong>
+              <span>${escapeHtml(yes.label)}</span>
+            </div>
+            <div class="probability-bar" aria-hidden="true">
+              <span style="--probability: ${Math.round(probability * 100)}%"></span>
+            </div>
+          </div>
+          <div class="market-stats">
+            <div>
+              <span>24h Volume</span>
+              <strong>${formatUsd(volume)}</strong>
+            </div>
+            <div>
+              <span>Liquidity</span>
+              <strong>${formatUsd(liquidity)}</strong>
+            </div>
+          </div>
+          <a class="market-link" href="${marketUrl(market)}" target="_blank" rel="noreferrer">
+            Open market
+          </a>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+async function loadPredictionMarkets() {
+  if (!els.predictionList) {
+    return;
+  }
+
+  els.refreshMarkets.disabled = true;
+  els.predictionStatus.textContent = "Mengambil data market real...";
+
+  try {
+    const response = await fetch(POLYMARKET_MARKETS_URL, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`API error ${response.status}`);
+    }
+
+    const markets = await response.json();
+    const displayMarkets = markets
+      .filter((market) => parseArray(market.outcomePrices).length)
+      .slice(0, 6);
+
+    renderMarkets(displayMarkets);
+    els.predictionStatus.textContent = `${displayMarkets.length} market aktif ditampilkan`;
+    els.marketUpdated.textContent = `Updated ${new Date().toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit"
+    })} WIB`;
+  } catch (error) {
+    els.predictionStatus.textContent = "Gagal mengambil data market";
+    els.predictionList.innerHTML = `
+      <article class="prediction-card">
+        <h3>Data prediction market belum bisa dimuat.</h3>
+        <p class="market-note">${error.message}. Coba refresh lagi, atau buka Polymarket langsung.</p>
+        <a class="market-link" href="https://polymarket.com/markets" target="_blank" rel="noreferrer">
+          Open Polymarket
+        </a>
+      </article>
+    `;
+  } finally {
+    els.refreshMarkets.disabled = false;
+  }
 }
 
 async function connectWallet() {
@@ -165,6 +355,7 @@ els.mainMenu?.addEventListener("click", (event) => {
     setMenuOpen(false);
   }
 });
+els.refreshMarkets?.addEventListener("click", loadPredictionMarkets);
 els.requestForm.addEventListener("submit", sendInferenceRequest);
 els.readResult.addEventListener("click", readResult);
 
@@ -172,3 +363,5 @@ if (window.ethereum) {
   window.ethereum.on("accountsChanged", () => window.location.reload());
   window.ethereum.on("chainChanged", () => window.location.reload());
 }
+
+loadPredictionMarkets();
