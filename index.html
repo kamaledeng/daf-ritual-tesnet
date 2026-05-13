@@ -7,6 +7,39 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Ritual DApp home">
+        <img src="./assets/ritual-logo.png" alt="Ritual logo" />
+        <span>Ritual Testnet</span>
+      </a>
+
+      <button
+        id="menuToggle"
+        class="menu-toggle"
+        type="button"
+        aria-label="Buka menu"
+        aria-expanded="false"
+        aria-controls="mainMenu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav id="mainMenu" class="main-menu" aria-label="Ritual navigation">
+        <a href="#testnet">Ritual Testnet</a>
+        <a href="https://explorer.ritualfoundation.org/" target="_blank" rel="noreferrer">
+          Ritual Explorer
+        </a>
+        <a href="https://faucet.ritualfoundation.org/" target="_blank" rel="noreferrer">
+          Faucet
+        </a>
+        <a href="https://www.ritualfoundation.org/docs" target="_blank" rel="noreferrer">
+          Docs
+        </a>
+      </nav>
+    </header>
+
     <main class="shell">
       <section class="hero">
         <div>
@@ -20,7 +53,7 @@
         <button id="connectWallet" class="primary" type="button">Connect Wallet</button>
       </section>
 
-      <section class="panel">
+      <section id="testnet" class="panel">
         <div class="network">
           <span>Status</span>
           <strong id="walletStatus">Wallet belum terhubung</strong>

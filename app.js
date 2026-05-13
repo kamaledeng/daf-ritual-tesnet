@@ -13,6 +13,8 @@ const state = {
 };
 
 const els = {
+  menuToggle: document.querySelector("#menuToggle"),
+  mainMenu: document.querySelector("#mainMenu"),
   connectWallet: document.querySelector("#connectWallet"),
   walletStatus: document.querySelector("#walletStatus"),
   networkStatus: document.querySelector("#networkStatus"),
@@ -26,6 +28,11 @@ const els = {
   txLink: document.querySelector("#txLink"),
   output: document.querySelector("#output")
 };
+
+function setMenuOpen(isOpen) {
+  document.body.classList.toggle("menu-open", isOpen);
+  els.menuToggle?.setAttribute("aria-expanded", String(isOpen));
+}
 
 function requireWallet() {
   if (!window.ethereum) {
@@ -149,6 +156,14 @@ els.connectWallet.addEventListener("click", () => {
   connectWallet().catch((error) => {
     els.output.textContent = error.message;
   });
+});
+els.menuToggle?.addEventListener("click", () => {
+  setMenuOpen(!document.body.classList.contains("menu-open"));
+});
+els.mainMenu?.addEventListener("click", (event) => {
+  if (event.target instanceof HTMLAnchorElement) {
+    setMenuOpen(false);
+  }
 });
 els.requestForm.addEventListener("submit", sendInferenceRequest);
 els.readResult.addEventListener("click", readResult);
