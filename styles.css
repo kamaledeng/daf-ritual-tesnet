@@ -123,6 +123,14 @@ textarea {
   gap: 8px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+}
+
 .main-menu a {
   border: 1px solid transparent;
   border-radius: 6px;
@@ -154,6 +162,11 @@ textarea {
   height: 2px;
   border-radius: 999px;
   background: currentColor;
+}
+
+.wallet-button {
+  min-width: 142px;
+  white-space: nowrap;
 }
 
 .shell {
@@ -1035,6 +1048,10 @@ pre {
 
   .menu-toggle {
     display: grid;
+  }
+
+  .header-actions {
+    display: contents;
   }
 
   .main-menu {
