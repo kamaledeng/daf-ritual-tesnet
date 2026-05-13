@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ritual Infernet DApp</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Ritual Testnet Starter</p>
+          <h1>AI inference request dari smart contract.</h1>
+          <p class="lede">
+            Hubungkan wallet, masukkan alamat kontrak consumer, lalu kirim prompt
+            ke kontrak yang meneruskan request ke jaringan Infernet.
+          </p>
+        </div>
+        <button id="connectWallet" class="primary" type="button">Connect Wallet</button>
+      </section>
+
+      <section class="panel">
+        <div class="network">
+          <span>Status</span>
+          <strong id="walletStatus">Wallet belum terhubung</strong>
+        </div>
+        <div class="network">
+          <span>Network</span>
+          <strong id="networkStatus">-</strong>
+        </div>
+        <div class="network">
+          <span>Account</span>
+          <strong id="accountStatus">-</strong>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <form id="requestForm" class="request-form">
+          <label>
+            Alamat contract consumer
+            <input
+              id="contractAddress"
+              name="contractAddress"
+              placeholder="0x..."
+              autocomplete="off"
+              spellcheck="false"
+              required
+            />
+          </label>
+
+          <label>
+            Prompt inference
+            <textarea
+              id="prompt"
+              name="prompt"
+              rows="5"
+              placeholder="Contoh: Ringkas teks ini dalam bahasa Indonesia..."
+              required
+            ></textarea>
+          </label>
+
+          <div class="actions">
+            <button id="sendRequest" class="primary" type="submit">Kirim request</button>
+            <button id="readResult" type="button">Baca hasil</button>
+          </div>
+        </form>
+
+        <aside class="result">
+          <label>
+            Request ID
+            <input id="requestId" placeholder="Isi setelah tx berhasil" inputmode="numeric" />
+          </label>
+          <div>
+            <span class="label">Transaction</span>
+            <a id="txLink" href="#" target="_blank" rel="noreferrer">Belum ada</a>
+          </div>
+          <div>
+            <span class="label">Output</span>
+            <pre id="output">Belum ada response.</pre>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

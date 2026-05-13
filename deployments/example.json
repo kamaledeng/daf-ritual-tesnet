@@ -1,0 +1,8 @@
+{
+  "networkName": "Ritual/EVM testnet target",
+  "chainId": 0,
+  "rpcUrl": "https://your-rpc.example",
+  "coordinatorAddress": "0x0000000000000000000000000000000000000000",
+  "containerId": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "consumerAddress": "0x0000000000000000000000000000000000000000"
+}
