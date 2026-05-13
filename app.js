@@ -14,6 +14,8 @@ const state = {
 
 const POLYMARKET_MARKETS_URL =
   "https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=6&order=volume24hr&ascending=false";
+const COINGECKO_MARKETS_URL =
+  "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,chainlink,near,render-token&order=market_cap_desc&per_page=6&page=1&sparkline=false&price_change_percentage=24h";
 
 const els = {
   menuToggle: document.querySelector("#menuToggle"),
@@ -33,7 +35,11 @@ const els = {
   refreshMarkets: document.querySelector("#refreshMarkets"),
   predictionList: document.querySelector("#predictionList"),
   predictionStatus: document.querySelector("#predictionStatus"),
-  marketUpdated: document.querySelector("#marketUpdated")
+  marketUpdated: document.querySelector("#marketUpdated"),
+  refreshCrypto: document.querySelector("#refreshCrypto"),
+  cryptoList: document.querySelector("#cryptoList"),
+  cryptoStatus: document.querySelector("#cryptoStatus"),
+  cryptoUpdated: document.querySelector("#cryptoUpdated")
 };
 
 function setMenuOpen(isOpen) {
@@ -96,6 +102,19 @@ function formatUsd(value) {
     currency: "USD",
     maximumFractionDigits: 0,
     notation: numeric >= 1000000 ? "compact" : "standard",
+    style: "currency"
+  }).format(numeric);
+}
+
+function formatPrice(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return "-";
+  }
+
+  return new Intl.NumberFormat("en-US", {
+    currency: "USD",
+    maximumFractionDigits: numeric >= 1 ? 2 : 6,
     style: "currency"
   }).format(numeric);
 }
@@ -249,6 +268,98 @@ async function loadPredictionMarkets() {
   }
 }
 
+function renderCryptoMarkets(coins) {
+  if (!els.cryptoList) {
+    return;
+  }
+
+  if (!coins.length) {
+    els.cryptoList.innerHTML = `
+      <article class="crypto-card">
+        <h3>Belum ada market cap yang bisa ditampilkan.</h3>
+        <p class="market-note">Coba refresh lagi beberapa saat lagi.</p>
+      </article>
+    `;
+    return;
+  }
+
+  els.cryptoList.innerHTML = coins
+    .map((coin) => {
+      const change = Number(coin.price_change_percentage_24h || 0);
+      const isNegative = change < 0;
+      const changeLabel = `${isNegative ? "" : "+"}${change.toFixed(2)}%`;
+
+      return `
+        <article class="crypto-card">
+          <div class="crypto-head">
+            <div class="crypto-identity">
+              <img src="${escapeHtml(coin.image)}" alt="${escapeHtml(coin.name)} logo" />
+              <div>
+                <strong>${escapeHtml(coin.name)}</strong>
+                <span>${escapeHtml(coin.symbol)}</span>
+              </div>
+            </div>
+            <span class="rank-pill">#${coin.market_cap_rank || "-"}</span>
+          </div>
+
+          <div class="crypto-price">
+            <strong>${formatPrice(coin.current_price)}</strong>
+            <span class="change-pill ${isNegative ? "negative" : ""}">${changeLabel} 24h</span>
+          </div>
+
+          <div class="crypto-stats">
+            <div>
+              <span>Market Cap</span>
+              <strong>${formatUsd(coin.market_cap)}</strong>
+            </div>
+            <div>
+              <span>24h Volume</span>
+              <strong>${formatUsd(coin.total_volume)}</strong>
+            </div>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+async function loadCryptoMarkets() {
+  if (!els.cryptoList) {
+    return;
+  }
+
+  els.refreshCrypto.disabled = true;
+  els.cryptoStatus.textContent = "Mengambil market cap dari CoinGecko...";
+
+  try {
+    const response = await fetch(COINGECKO_MARKETS_URL, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`CoinGecko API error ${response.status}`);
+    }
+
+    const coins = await response.json();
+    renderCryptoMarkets(coins);
+    els.cryptoStatus.textContent = `${coins.length} aset crypto ditampilkan`;
+    els.cryptoUpdated.textContent = `Updated ${new Date().toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit"
+    })} WIB`;
+  } catch (error) {
+    els.cryptoStatus.textContent = "Gagal mengambil data CoinGecko";
+    els.cryptoList.innerHTML = `
+      <article class="crypto-card">
+        <h3>Data market cap belum bisa dimuat.</h3>
+        <p class="market-note">${escapeHtml(error.message)}. Coba refresh lagi, atau buka CoinGecko langsung.</p>
+        <a class="market-link" href="https://www.coingecko.com/" target="_blank" rel="noreferrer">
+          Open CoinGecko
+        </a>
+      </article>
+    `;
+  } finally {
+    els.refreshCrypto.disabled = false;
+  }
+}
+
 async function connectWallet() {
   requireWallet();
 
@@ -356,6 +467,7 @@ els.mainMenu?.addEventListener("click", (event) => {
   }
 });
 els.refreshMarkets?.addEventListener("click", loadPredictionMarkets);
+els.refreshCrypto?.addEventListener("click", loadCryptoMarkets);
 els.requestForm.addEventListener("submit", sendInferenceRequest);
 els.readResult.addEventListener("click", readResult);
 
@@ -364,4 +476,5 @@ if (window.ethereum) {
   window.ethereum.on("chainChanged", () => window.location.reload());
 }
 
+loadCryptoMarkets();
 loadPredictionMarkets();

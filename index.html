@@ -164,6 +164,27 @@
         </div>
       </section>
 
+      <section class="crypto-section" aria-labelledby="cryptoTitle">
+        <div class="section-heading market-heading">
+          <div>
+            <p class="eyebrow">CoinGecko Data</p>
+            <h2 id="cryptoTitle">Crypto market cap live.</h2>
+          </div>
+          <button id="refreshCrypto" type="button">Refresh market</button>
+        </div>
+
+        <div class="market-meta">
+          <span id="cryptoStatus">Mengambil data CoinGecko...</span>
+          <span id="cryptoUpdated">Source: CoinGecko API</span>
+        </div>
+
+        <div id="cryptoList" class="crypto-grid" aria-live="polite">
+          <article class="crypto-card skeleton"></article>
+          <article class="crypto-card skeleton"></article>
+          <article class="crypto-card skeleton"></article>
+        </div>
+      </section>
+
       <section class="markets-section" aria-labelledby="marketsTitle">
         <div class="section-heading market-heading">
           <div>
