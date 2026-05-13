@@ -273,6 +273,108 @@ pre {
   white-space: pre-wrap;
 }
 
+.site-footer {
+  border-top: 1px solid rgba(99, 210, 151, 0.2);
+  background:
+    linear-gradient(180deg, rgba(9, 31, 20, 0.82), rgba(10, 16, 14, 0.96)),
+    #0b1711;
+  margin-top: 34px;
+}
+
+.footer-inner,
+.footer-bottom {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.footer-inner {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.45fr);
+  gap: 48px;
+  padding: 42px 0;
+}
+
+.footer-brand {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.footer-brand p {
+  max-width: 360px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.footer-column {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.footer-column h2 {
+  margin: 0 0 4px;
+  color: var(--text);
+  font-size: 0.82rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.footer-column a {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  gap: 8px;
+  color: var(--muted);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.footer-column a:hover {
+  color: var(--accent);
+}
+
+.tag {
+  border-radius: 999px;
+  background: rgba(99, 210, 151, 0.13);
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 3px 7px;
+  text-transform: uppercase;
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-top: 1px solid rgba(244, 240, 232, 0.1);
+  color: rgba(244, 240, 232, 0.62);
+  font-size: 0.88rem;
+  padding: 18px 0 24px;
+}
+
+.footer-bottom span {
+  margin-right: auto;
+}
+
+.footer-bottom a {
+  color: rgba(244, 240, 232, 0.72);
+  text-decoration: none;
+}
+
+.footer-bottom a:hover {
+  color: var(--accent);
+}
+
 @media (max-width: 820px) {
   .site-header {
     align-items: center;
@@ -316,5 +418,24 @@ pre {
 
   .hero {
     align-items: start;
+  }
+
+  .footer-inner,
+  .footer-links {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-inner {
+    gap: 30px;
+  }
+
+  .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-bottom span {
+    margin-right: 0;
   }
 }
