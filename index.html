@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="ambient" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
     <header class="site-header">
       <a class="brand" href="https://ritual.net/" target="_blank" rel="noreferrer" aria-label="Ritual website">
         <img src="./assets/ritual-logo.png" alt="Ritual logo" />
@@ -42,15 +48,25 @@
 
     <main class="shell">
       <section class="hero">
-        <div>
+        <div class="hero-copy">
           <p class="eyebrow">Ritual Testnet Starter</p>
           <h1>AI inference request dari smart contract.</h1>
+          <p class="signal-line">
+            <span>Inference</span>
+            <span>Smart Contracts</span>
+            <span>Autonomous AI</span>
+          </p>
           <p class="lede">
             Hubungkan wallet, masukkan alamat kontrak consumer, lalu kirim prompt
             ke kontrak yang meneruskan request ke jaringan Infernet.
           </p>
         </div>
-        <button id="connectWallet" class="primary" type="button">Connect Wallet</button>
+        <div class="hero-visual">
+          <div class="ritual-orbit" aria-hidden="true">
+            <img src="./assets/ritual-logo.png" alt="" />
+          </div>
+          <button id="connectWallet" class="primary" type="button">Connect Wallet</button>
+        </div>
       </section>
 
       <section id="testnet" class="panel">
@@ -113,6 +129,39 @@
             <pre id="output">Belum ada response.</pre>
           </div>
         </aside>
+      </section>
+
+      <section class="tools-section" aria-labelledby="toolsTitle">
+        <div class="section-heading">
+          <p class="eyebrow">Network Tools</p>
+          <h2 id="toolsTitle">Shortcut buat build dan eksplorasi Ritual.</h2>
+        </div>
+
+        <div class="tool-grid">
+          <a class="tool-card" href="https://explorer.ritualfoundation.org/" target="_blank" rel="noreferrer">
+            <span class="tool-icon">EX</span>
+            <strong>Ritual Explorer</strong>
+            <span>Cek block, transaksi, address, dan aktivitas network secara real-time.</span>
+          </a>
+
+          <a class="tool-card" href="https://faucet.ritualfoundation.org/" target="_blank" rel="noreferrer">
+            <span class="tool-icon">FA</span>
+            <strong>Testnet Faucet</strong>
+            <span>Ambil token testnet untuk deploy dan mencoba transaksi DApp.</span>
+          </a>
+
+          <a class="tool-card" href="https://docs.ritualfoundation.org/" target="_blank" rel="noreferrer">
+            <span class="tool-icon">DO</span>
+            <strong>Developer Docs</strong>
+            <span>Baca konsep chain, precompile, testnet, dan arsitektur Ritual.</span>
+          </a>
+
+          <a class="tool-card" href="https://github.com/ritual-foundation" target="_blank" rel="noreferrer">
+            <span class="tool-icon">GH</span>
+            <strong>GitHub</strong>
+            <span>Lihat source, contoh integrasi, dan resource developer dari Ritual.</span>
+          </a>
+        </div>
       </section>
     </main>
 
